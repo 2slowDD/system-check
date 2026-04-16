@@ -16,10 +16,10 @@ function assertIncludes(file, expected) {
 
 const checks = [
   ['README.md', 'Version 0.1.5'],
-  ['README.md', 'sc-sync'],
+  ['README.md', 'system-check-sync'],
   ['CHANGELOG.md', '## [0.1.5] - 2026-04-16'],
   ['skill/SKILL.md', '## Built-In Sync Command'],
-  ['skill/SKILL.md', '`sc-sync`'],
+  ['skill/SKILL.md', '`system-check-sync`'],
   ['skill/SKILL.md', 'git pull --ff-only'],
   ['skill/SKILL.md', 'scripts\\sync.ps1'],
   ['skill/SKILL.md', 'scripts\\sync-claude.ps1'],

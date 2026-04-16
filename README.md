@@ -146,21 +146,20 @@ Examples:
 sc-SEO audit
 sc-Brainstorming
 sc-systematic-debugging
-sc-sync
 ```
 
 Normal skill invocation, such as `SEO audit`, does not trigger `system-check`.
 
 ### Sync The Installed Skill
 
-Use `sc-sync` to check whether the local `systems-check` source repository is current with `origin/main`.
+Use `system-check-sync` to check whether the local `systems-check` source repository is current with `origin/main`.
 
-When the source repository is clean and behind the remote, `sc-sync` fast-forwards it with `git pull --ff-only`, then refreshes the installed skill for the current host:
+When the source repository is clean and behind the remote, `system-check-sync` fast-forwards it with `git pull --ff-only`, then refreshes the installed skill for the current host:
 
 - Codex: `scripts\sync.ps1` or `scripts/sync.sh`
 - Claude: `scripts\sync-claude.ps1` or `scripts/sync-claude.sh`
 
-`sc-sync` stops instead of updating when the working tree is dirty, the local branch is ahead, or the branch has diverged. It never pushes, force-pushes, rebases, resets, or deletes files.
+`system-check-sync` stops instead of updating when the working tree is dirty, the local branch is ahead, or the branch has diverged. It never pushes, force-pushes, rebases, resets, or deletes files.
 
 ## Target Suggestions
 

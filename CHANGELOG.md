@@ -8,8 +8,8 @@ This project follows the spirit of [Keep a Changelog](https://keepachangelog.com
 
 ### Added
 
-- Added reserved `sc-sync` behavior to check the local `systems-check` source repository against `origin/main`, fast-forward when safe, and refresh the installed Codex or Claude skill.
-- Added release documentation verification for the `sc-sync` behavior.
+- Added reserved `system-check-sync` behavior to check the local `systems-check` source repository against `origin/main`, fast-forward when safe, and refresh the installed Codex or Claude skill.
+- Added release documentation verification for the `system-check-sync` behavior.
 
 ## [0.1.4] - 2026-04-16
 

@@ -32,14 +32,13 @@ sc-SEO audit
 sc-Brainstorming
 sc-systematic-debugging
 sc-github fix ci
-sc-sync
 ```
 
 Do not run `system-check` when the user invokes the target skill normally.
 
 ## Built-In Sync Command
 
-`sc-sync` is a reserved maintenance command for this `systems-check` skill. It is not a skill target and must be handled before Post-Send Target Suggestions.
+`system-check-sync` is a reserved maintenance command for this `systems-check` skill. It is not a skill target and must be handled before Post-Send Target Suggestions.
 
 Purpose: check whether the local `systems-check` source repository is current with its configured remote and, when safe, fast-forward update the local source and refresh the installed skill.
 
@@ -52,7 +51,7 @@ Repository resolution order:
    - `%USERPROFILE%\systems-check`
    - `%USERPROFILE%\Documents\systems-check`
    - `$HOME/systems-check`
-4. If no source repository is found, stop and report that `sc-sync` needs a local clone of `github.com/2slowDD/system-check`.
+4. If no source repository is found, stop and report that `system-check-sync` needs a local clone of `github.com/2slowDD/system-check`.
 
 Sync procedure:
 
@@ -69,11 +68,11 @@ Sync procedure:
    - In Claude, run `scripts\sync-claude.ps1` on Windows or `scripts/sync-claude.sh` on macOS/Linux.
 6. Tell the user to restart Codex or Claude so the refreshed skill list/instructions are loaded.
 
-Safety rules for `sc-sync`:
+Safety rules for `system-check-sync`:
 
-- `sc-sync` may read from the remote with `git fetch` because the user explicitly requested a remote freshness check.
-- `sc-sync` may update local files only by fast-forward pull and host-specific sync script.
-- `sc-sync` must never run `git push`, force-push, rebase, reset, or delete files.
+- `system-check-sync` may read from the remote with `git fetch` because the user explicitly requested a remote freshness check.
+- `system-check-sync` may update local files only by fast-forward pull and host-specific sync script.
+- `system-check-sync` must never run `git push`, force-push, rebase, reset, or delete files.
 - If branch state is not a clean fast-forward, stop instead of guessing.
 
 ## Post-Send Target Suggestions
@@ -208,7 +207,7 @@ Examples:
 
 ## Procedure
 
-1. If the user sent exactly `sc-sync`, handle the Built-In Sync Command first.
+1. If the user sent exactly `system-check-sync`, handle the Built-In Sync Command first.
 2. If the user sent `sc-` or a partial `sc-<partial>` invocation, handle Post-Send Target Suggestions first.
 3. Identify the target complex skill.
 4. Locate its requirements manifest using the lookup order.
@@ -305,7 +304,7 @@ Proceed or stop?
 - Always complete the checklist before stopping.
 - Do not auto-run before complex skills.
 - Run only when the user explicitly invokes `sc-<target skill>`.
-- Treat exact `sc-sync` as the Built-In Sync Command, not as a partial target suggestion.
+- Treat exact `system-check-sync` as the Built-In Sync Command, not as a partial target suggestion.
 - Treat exact `sc-` and partial `sc-<partial>` messages as target suggestion requests, not approval to run a check.
 - Default to stop when a required item fails.
 - Do not print secrets or environment variable values.
