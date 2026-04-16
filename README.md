@@ -5,7 +5,7 @@
   <img alt="Claude Code Skill" src="https://img.shields.io/badge/Claude%20Code-Skill-5A32A3?style=for-the-badge">
   <img alt="Codex Skill" src="https://img.shields.io/badge/Codex-Skill-111111?style=for-the-badge">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"></a>
-  <img alt="Version 0.1.0" src="https://img.shields.io/badge/Version-0.1.0-blue?style=for-the-badge">
+  <img alt="Version 0.1.1" src="https://img.shields.io/badge/Version-0.1.1-blue?style=for-the-badge">
 </p>
 
 <p align="center">
@@ -20,8 +20,9 @@ Before a complex skill starts using subskills, MCPs, external commands, helper s
 
 - Runs only when manually invoked with `sc-<target skill>`.
 - Checks requirements declared by targeted complex skills.
-- Lists every item with `[pass]`, `[fail]`, or `[note]`.
+- Lists every item with `✅`, `❌`, or `ℹ️`.
 - Stops on failed required items unless the user clearly approves proceeding.
+- Reports optional gaps separately instead of calling a checklist "all green."
 - Never prints environment variable values.
 - Avoids network, auth, API, install, or paid-service checks by default.
 - Saves generated manifests to sidecar cache by default, with user override options for inline save or no save.
@@ -235,4 +236,4 @@ LICENSE
 
 ## Version
 
-Current release: `0.1.0`
+Current release: `0.1.1`

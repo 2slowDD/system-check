@@ -158,8 +158,9 @@ Examples:
 9. Show the draft to the user and ask where to save it: `1. Sidecar cache (default)`, `2. Inline skill file`, or `3. Do not save`.
 10. Save the manifest only after the user chooses a target.
 11. Rerun the light checklist from the saved manifest.
-12. If all required items pass, print `System check: all green - proceeding.` and continue.
-13. If any required item fails, list all results, print each failed required item, ask `Proceed or stop?`, and stop unless the user clearly says proceed.
+12. If all required and optional items pass, print `System check: all checks green - proceeding.` and continue.
+13. If all required items pass but one or more optional items fail, print `System check: required items green; optional gaps found.` and continue. Do not call this "all green."
+14. If any required item fails, list all results, print each failed required item, ask `Proceed or stop?`, and stop unless the user clearly says proceed.
 
 ## Required Output Format
 
@@ -168,11 +169,24 @@ Passing:
 ```text
 System check: <skill-name>
 
-[pass] required skill: seo-firecrawl
-[pass] required command: python
-[pass] optional env: PAGESPEED_API_KEY
+✅ required skill: seo-firecrawl
+✅ required command: python
+✅ optional env: PAGESPEED_API_KEY
 
-System check: all green - proceeding.
+System check: all checks green - proceeding.
+```
+
+Passing with optional gaps:
+
+```text
+System check: <skill-name>
+
+✅ required skill: seo-firecrawl
+✅ required command: python
+❌ optional mcp: dataforseo | mcp__dataforseo
+ℹ️ DataForSEO enriches the audit when available.
+
+System check: required items green; optional gaps found.
 ```
 
 Failing:
@@ -180,12 +194,12 @@ Failing:
 ```text
 System check: <skill-name>
 
-[pass] required skill: seo-firecrawl
-[fail] required mcp: google_search_console | mcp__google_search_console
-[pass] required command: python
-[note] PageSpeed checks are skipped if the API key is unavailable
+✅ required skill: seo-firecrawl
+❌ required mcp: google_search_console | mcp__google_search_console
+✅ required command: python
+ℹ️ PageSpeed checks are skipped if the API key is unavailable
 
-This requirement failed - required mcp: google_search_console | mcp__google_search_console
+Required item failed - required mcp: google_search_console | mcp__google_search_console
 
 Proceed or stop?
 ```
@@ -195,8 +209,8 @@ Bootstrap draft:
 ```text
 System check: <skill-name>
 
-[fail] required manifest: no System Check Requirements section or sidecar manifest found
-[note] bootstrap draft generated from local SKILL.md and dependency signals
+❌ required manifest: no System Check Requirements section or sidecar manifest found
+ℹ️ bootstrap draft generated from local SKILL.md and dependency signals
 
 ## System Check Requirements
 - required command: python # confidence: high, found in setup script
@@ -215,9 +229,9 @@ Missing manifest:
 ```text
 System check: <skill-name>
 
-[fail] required manifest: no System Check Requirements section or sidecar manifest found
+❌ required manifest: no System Check Requirements section or sidecar manifest found
 
-This requirement failed - manifest missing.
+Required item failed - manifest missing.
 
 Provide the skill local path or GitHub remote/source so I can inspect requirements, or choose stop.
 Proceed or stop?

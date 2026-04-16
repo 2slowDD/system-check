@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 
 This project follows the spirit of [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses semantic versioning.
 
+## [0.1.1] - 2026-04-16
+
+### Changed
+
+- Replaced textual `[pass]`, `[fail]`, and `[note]` output examples with `✅`, `❌`, and `ℹ️`.
+- Clarified completion summaries so optional failures report as optional gaps instead of "all green."
+
 ## [0.1.0] - 2026-04-16
 
 ### Added
