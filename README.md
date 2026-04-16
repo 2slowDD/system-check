@@ -16,6 +16,8 @@
 
 Before a complex skill starts using subskills, MCPs, external commands, helper scripts, project roots, auth flows, or long workflows, `system-check` verifies that declared requirements appear available. If anything required is missing, it completes the checklist and stops before expensive work begins.
 
+![Example system-check output](system%20check%20example.jpg)
+
 ## What It Does
 
 - Runs only when manually invoked with `sc-<target skill>`.
