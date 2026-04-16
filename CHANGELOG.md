@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 
 This project follows the spirit of [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses semantic versioning.
 
+## [0.1.3] - 2026-04-16
+
+### Added
+
+- Added post-send autocomplete handling for exact `sc-` and partial `sc-<partial>` invocations.
+- Documented the current limitation that native typeahead requires host AI client support.
+
 ## [0.1.2] - 2026-04-16
 
 ### Changed

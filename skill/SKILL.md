@@ -36,6 +36,27 @@ sc-github fix ci
 
 Do not run `system-check` when the user invokes the target skill normally.
 
+## Autocomplete / Partial Invocation
+
+This skill cannot add native typeahead to the chat composer by itself. True typeahead requires host client support from Codex, Claude, or another AI client.
+
+When the user sends exactly `sc-`, treat it as an autocomplete request:
+
+1. List all available skills from the current session inventory, grouped by source when the source is known.
+2. If the current session inventory is unavailable or obviously incomplete, scan known local skill roots for this AI setup as a fallback.
+3. Ask the user to reply with a number or a full `sc-<target skill>` invocation.
+4. Do not run any system check until the user chooses a target.
+
+When the user message starts with `sc-` and the suffix is partial, such as `sc-fire` or `sc-seo-g`, treat it as an autocomplete request before normal target resolution:
+
+1. Match the suffix against skill names with the same normalization used by Target Resolution.
+2. Prefer current-session skills over fallback filesystem discoveries.
+3. If there is one clear match, ask whether to run `sc-<matched skill>`.
+4. If there are multiple matches, show a numbered list and ask the user to choose.
+5. If there are no matches, continue with the existing missing-target behavior.
+
+For Codex fallback scans, check likely local roots such as `~/.codex/skills`, `~/.codex/superpowers/skills`, and `~/.agents/skills`. For Claude fallback scans, check the current Claude skill inventory first, then known local Claude skill roots when available.
+
 ## Target Resolution
 
 Resolve the target skill in this order:
@@ -147,20 +168,21 @@ Examples:
 
 ## Procedure
 
-1. Identify the target complex skill.
-2. Locate its requirements manifest using the lookup order.
-3. If no manifest exists, enter bootstrap mode and print the missing-manifest checklist.
-4. Inspect the target local `SKILL.md` first if it is available.
-5. Ask for the local path or GitHub/source URL only if the local source is unavailable or insufficient.
-6. Inspect remote or GitHub source only after the current routing and approval rules allow it.
-7. Search source material for `Requirements`, `Dependencies`, `MCP`, `MCP integrations`, `Extensions`, `Tools`, `Environment variables`, `API keys`, `Setup`, `Install`, `Prerequisites`, `Subagents`, `Scripts`, `Project root`, `Commands`, `Auth`, command snippets, helper paths, and referenced skill names.
-8. Synthesize a draft manifest from the discovered requirements.
-9. Show the draft to the user and ask where to save it: `1. Sidecar cache (default, preferred)`, `2. Inline skill file`, or `3. Do not save`.
-10. Save the manifest only after the user chooses a target.
-11. Rerun the light checklist from the saved manifest.
-12. If all required and optional items pass, print `System check: all checks green - proceeding.` and continue.
-13. If all required items pass but one or more optional items fail, print `System check: required items green; optional gaps found.` and continue. Do not call this "all green."
-14. If any required item fails, list all results, print each failed required item, ask `Proceed or stop?`, and stop unless the user clearly says proceed.
+1. If the user sent `sc-` or a partial `sc-<partial>` invocation, handle Autocomplete / Partial Invocation first.
+2. Identify the target complex skill.
+3. Locate its requirements manifest using the lookup order.
+4. If no manifest exists, enter bootstrap mode and print the missing-manifest checklist.
+5. Inspect the target local `SKILL.md` first if it is available.
+6. Ask for the local path or GitHub/source URL only if the local source is unavailable or insufficient.
+7. Inspect remote or GitHub source only after the current routing and approval rules allow it.
+8. Search source material for `Requirements`, `Dependencies`, `MCP`, `MCP integrations`, `Extensions`, `Tools`, `Environment variables`, `API keys`, `Setup`, `Install`, `Prerequisites`, `Subagents`, `Scripts`, `Project root`, `Commands`, `Auth`, command snippets, helper paths, and referenced skill names.
+9. Synthesize a draft manifest from the discovered requirements.
+10. Show the draft to the user and ask where to save it: `1. Sidecar cache (default, preferred)`, `2. Inline skill file`, or `3. Do not save`.
+11. Save the manifest only after the user chooses a target.
+12. Rerun the light checklist from the saved manifest.
+13. If all required and optional items pass, print `System check: all checks green - proceeding.` and continue.
+14. If all required items pass but one or more optional items fail, print `System check: required items green; optional gaps found.` and continue. Do not call this "all green."
+15. If any required item fails, list all results, print each failed required item, ask `Proceed or stop?`, and stop unless the user clearly says proceed.
 
 ## Required Output Format
 
@@ -242,6 +264,7 @@ Proceed or stop?
 - Always complete the checklist before stopping.
 - Do not auto-run before complex skills.
 - Run only when the user explicitly invokes `sc-<target skill>`.
+- Treat exact `sc-` and partial `sc-<partial>` messages as autocomplete requests, not approval to run a check.
 - Default to stop when a required item fails.
 - Do not print secrets or environment variable values.
 - Never silently edit a skill file.
