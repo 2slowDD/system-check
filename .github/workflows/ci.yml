@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check shell installer syntax
+        run: |
+          sh -n scripts/install.sh
+          sh -n scripts/install-claude.sh
+
+      - name: Check PowerShell installer syntax
+        shell: pwsh
+        run: |
+          $null = [scriptblock]::Create((Get-Content -LiteralPath './scripts/install.ps1' -Raw))
+          $null = [scriptblock]::Create((Get-Content -LiteralPath './scripts/install-claude.ps1' -Raw))
+
+      - name: Check Markdown fence balance
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          bad = []
+          for path in Path('.').rglob('*.md'):
+              if '.git' in path.parts:
+                  continue
+              if path.read_text(encoding='utf-8').count('```') % 2:
+                  bad.append(str(path))
+          if bad:
+              raise SystemExit('Unbalanced Markdown fences: ' + ', '.join(bad))
+          print('Markdown fences balanced')
+          PY
+
+      - name: Check for common secret placeholders
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+
+          patterns = [
+              re.compile(r'BEGIN (RSA|OPENSSH|PRIVATE)'),
+              re.compile(r'api[_-]?key\s*='),
+              re.compile(r'token\s*='),
+              re.compile(r'password\s*='),
+              re.compile(r'secret\s*='),
+              re.compile('g' + 'hp_'),
+              re.compile('s' + 'k-[A-Za-z0-9]'),
+          ]
+          findings = []
+          for path in Path('.').rglob('*'):
+              if '.git' in path.parts or not path.is_file():
+                  continue
+              try:
+                  text = path.read_text(encoding='utf-8')
+              except UnicodeDecodeError:
+                  continue
+              for line_no, line in enumerate(text.splitlines(), 1):
+                  if any(pattern.search(line) for pattern in patterns):
+                      findings.append(f'{path}:{line_no}:{line}')
+          if findings:
+              print('Potential secret pattern found')
+              print('\n'.join(findings))
+              raise SystemExit(1)
+          print('No common secret patterns found')
+          PY
