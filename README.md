@@ -5,7 +5,7 @@
   <img alt="Claude Code Skill" src="https://img.shields.io/badge/Claude%20Code-Skill-5A32A3?style=for-the-badge">
   <img alt="Codex Skill" src="https://img.shields.io/badge/Codex-Skill-111111?style=for-the-badge">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"></a>
-  <img alt="Version 0.1.4" src="https://img.shields.io/badge/Version-0.1.4-blue?style=for-the-badge">
+  <img alt="Version 0.1.5" src="https://img.shields.io/badge/Version-0.1.5-blue?style=for-the-badge">
 </p>
 
 <p align="center">
@@ -146,9 +146,21 @@ Examples:
 sc-SEO audit
 sc-Brainstorming
 sc-systematic-debugging
+sc-sync
 ```
 
 Normal skill invocation, such as `SEO audit`, does not trigger `system-check`.
+
+### Sync The Installed Skill
+
+Use `sc-sync` to check whether the local `systems-check` source repository is current with `origin/main`.
+
+When the source repository is clean and behind the remote, `sc-sync` fast-forwards it with `git pull --ff-only`, then refreshes the installed skill for the current host:
+
+- Codex: `scripts\sync.ps1` or `scripts/sync.sh`
+- Claude: `scripts\sync-claude.ps1` or `scripts/sync-claude.sh`
+
+`sc-sync` stops instead of updating when the working tree is dirty, the local branch is ahead, or the branch has diverged. It never pushes, force-pushes, rebases, resets, or deletes files.
 
 ## Target Suggestions
 

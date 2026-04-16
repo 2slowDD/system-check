@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 
 This project follows the spirit of [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses semantic versioning.
 
+## [0.1.5] - 2026-04-16
+
+### Added
+
+- Added reserved `sc-sync` behavior to check the local `systems-check` source repository against `origin/main`, fast-forward when safe, and refresh the installed Codex or Claude skill.
+- Added release documentation verification for the `sc-sync` behavior.
+
 ## [0.1.4] - 2026-04-16
 
 ### Changed

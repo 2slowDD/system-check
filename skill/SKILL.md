@@ -32,9 +32,49 @@ sc-SEO audit
 sc-Brainstorming
 sc-systematic-debugging
 sc-github fix ci
+sc-sync
 ```
 
 Do not run `system-check` when the user invokes the target skill normally.
+
+## Built-In Sync Command
+
+`sc-sync` is a reserved maintenance command for this `systems-check` skill. It is not a skill target and must be handled before Post-Send Target Suggestions.
+
+Purpose: check whether the local `systems-check` source repository is current with its configured remote and, when safe, fast-forward update the local source and refresh the installed skill.
+
+Repository resolution order:
+
+1. Use the current working directory when it is inside a Git repository whose `origin` remote resolves to `github.com/2slowDD/system-check`.
+2. Use `SYSTEM_CHECK_REPO` when that environment variable points to a Git repository with the same `origin`.
+3. Check common local source paths:
+   - `D:\AI\ChatGPT\systems-check`
+   - `%USERPROFILE%\systems-check`
+   - `%USERPROFILE%\Documents\systems-check`
+   - `$HOME/systems-check`
+4. If no source repository is found, stop and report that `sc-sync` needs a local clone of `github.com/2slowDD/system-check`.
+
+Sync procedure:
+
+1. Run `git status --short --branch` in the resolved source repository.
+2. If there are uncommitted changes, stop and report that sync is blocked until the working tree is clean.
+3. Run `git fetch origin`.
+4. Compare `HEAD` to `origin/main`:
+   - Same commit: report that `systems-check` is current and stop.
+   - Local behind `origin/main`: run `git pull --ff-only origin main`.
+   - Local ahead of `origin/main`: report that local commits have not been pushed and stop.
+   - Diverged: report that manual Git intervention is required and stop.
+5. After a successful fast-forward pull, refresh the installed skill:
+   - In Codex, run `scripts\sync.ps1` on Windows or `scripts/sync.sh` on macOS/Linux.
+   - In Claude, run `scripts\sync-claude.ps1` on Windows or `scripts/sync-claude.sh` on macOS/Linux.
+6. Tell the user to restart Codex or Claude so the refreshed skill list/instructions are loaded.
+
+Safety rules for `sc-sync`:
+
+- `sc-sync` may read from the remote with `git fetch` because the user explicitly requested a remote freshness check.
+- `sc-sync` may update local files only by fast-forward pull and host-specific sync script.
+- `sc-sync` must never run `git push`, force-push, rebase, reset, or delete files.
+- If branch state is not a clean fast-forward, stop instead of guessing.
 
 ## Post-Send Target Suggestions
 
@@ -168,21 +208,22 @@ Examples:
 
 ## Procedure
 
-1. If the user sent `sc-` or a partial `sc-<partial>` invocation, handle Post-Send Target Suggestions first.
-2. Identify the target complex skill.
-3. Locate its requirements manifest using the lookup order.
-4. If no manifest exists, enter bootstrap mode and print the missing-manifest checklist.
-5. Inspect the target local `SKILL.md` first if it is available.
-6. Ask for the local path or GitHub/source URL only if the local source is unavailable or insufficient.
-7. Inspect remote or GitHub source only after the current routing and approval rules allow it.
-8. Search source material for `Requirements`, `Dependencies`, `MCP`, `MCP integrations`, `Extensions`, `Tools`, `Environment variables`, `API keys`, `Setup`, `Install`, `Prerequisites`, `Subagents`, `Scripts`, `Project root`, `Commands`, `Auth`, command snippets, helper paths, and referenced skill names.
-9. Synthesize a draft manifest from the discovered requirements.
-10. Show the draft to the user and ask where to save it: `1. Sidecar cache (default, preferred)`, `2. Inline skill file`, or `3. Do not save`.
-11. Save the manifest only after the user chooses a target.
-12. Rerun the light checklist from the saved manifest.
-13. If all required and optional items pass, print `System check: all checks green - proceeding.` and continue.
-14. If all required items pass but one or more optional items fail, print `System check: required items green; optional gaps found.` and continue. Do not call this "all green."
-15. If any required item fails, list all results, print each failed required item, ask `Proceed or stop?`, and stop unless the user clearly says proceed.
+1. If the user sent exactly `sc-sync`, handle the Built-In Sync Command first.
+2. If the user sent `sc-` or a partial `sc-<partial>` invocation, handle Post-Send Target Suggestions first.
+3. Identify the target complex skill.
+4. Locate its requirements manifest using the lookup order.
+5. If no manifest exists, enter bootstrap mode and print the missing-manifest checklist.
+6. Inspect the target local `SKILL.md` first if it is available.
+7. Ask for the local path or GitHub/source URL only if the local source is unavailable or insufficient.
+8. Inspect remote or GitHub source only after the current routing and approval rules allow it.
+9. Search source material for `Requirements`, `Dependencies`, `MCP`, `MCP integrations`, `Extensions`, `Tools`, `Environment variables`, `API keys`, `Setup`, `Install`, `Prerequisites`, `Subagents`, `Scripts`, `Project root`, `Commands`, `Auth`, command snippets, helper paths, and referenced skill names.
+10. Synthesize a draft manifest from the discovered requirements.
+11. Show the draft to the user and ask where to save it: `1. Sidecar cache (default, preferred)`, `2. Inline skill file`, or `3. Do not save`.
+12. Save the manifest only after the user chooses a target.
+13. Rerun the light checklist from the saved manifest.
+14. If all required and optional items pass, print `System check: all checks green - proceeding.` and continue.
+15. If all required items pass but one or more optional items fail, print `System check: required items green; optional gaps found.` and continue. Do not call this "all green."
+16. If any required item fails, list all results, print each failed required item, ask `Proceed or stop?`, and stop unless the user clearly says proceed.
 
 ## Required Output Format
 
@@ -264,6 +305,7 @@ Proceed or stop?
 - Always complete the checklist before stopping.
 - Do not auto-run before complex skills.
 - Run only when the user explicitly invokes `sc-<target skill>`.
+- Treat exact `sc-sync` as the Built-In Sync Command, not as a partial target suggestion.
 - Treat exact `sc-` and partial `sc-<partial>` messages as target suggestion requests, not approval to run a check.
 - Default to stop when a required item fails.
 - Do not print secrets or environment variable values.
