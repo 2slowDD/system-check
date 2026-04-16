@@ -1,7 +1,7 @@
 # systems-check
 
 <p align="center">
-  <a href="https://github.com/2slowDD/systems-check/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/2slowDD/systems-check/ci.yml?branch=main&label=CI&style=for-the-badge"></a>
+  <a href="https://github.com/2slowDD/system-check/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/2slowDD/system-check/ci.yml?branch=main&label=CI&style=for-the-badge"></a>
   <img alt="Claude Code Skill" src="https://img.shields.io/badge/Claude%20Code-Skill-5A32A3?style=for-the-badge">
   <img alt="Codex Skill" src="https://img.shields.io/badge/Codex-Skill-111111?style=for-the-badge">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"></a>
