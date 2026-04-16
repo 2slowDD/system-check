@@ -5,7 +5,7 @@
   <img alt="Claude Code Skill" src="https://img.shields.io/badge/Claude%20Code-Skill-5A32A3?style=for-the-badge">
   <img alt="Codex Skill" src="https://img.shields.io/badge/Codex-Skill-111111?style=for-the-badge">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"></a>
-  <img alt="Version 0.1.1" src="https://img.shields.io/badge/Version-0.1.1-blue?style=for-the-badge">
+  <img alt="Version 0.1.2" src="https://img.shields.io/badge/Version-0.1.2-blue?style=for-the-badge">
 </p>
 
 <p align="center">
@@ -25,7 +25,7 @@ Before a complex skill starts using subskills, MCPs, external commands, helper s
 - Reports optional gaps separately instead of calling a checklist "all green."
 - Never prints environment variable values.
 - Avoids network, auth, API, install, or paid-service checks by default.
-- Saves generated manifests to sidecar cache by default, with user override options for inline save or no save.
+- Saves generated manifests to sidecar cache by default and preference, with user override options for inline save or no save.
 
 ## Install For Codex
 
@@ -176,7 +176,7 @@ The flow is:
 2. Infer a draft manifest from dependency signals.
 3. Show the draft for review.
 4. Ask where to save it:
-   - `1. Sidecar cache (default)`
+   - `1. Sidecar cache (default, preferred)`
    - `2. Inline skill file`
    - `3. Do not save`
 5. Rerun the system check from the saved manifest.
@@ -187,7 +187,7 @@ Generated manifests save to sidecar cache by default:
 ~/.codex/system-check/manifests/<skill-name>.md
 ```
 
-The user can override this and choose inline save or no save when prompted.
+The sidecar cache is the preferred save target because it avoids silently editing the target skill while keeping future checks reusable. The user can override this and choose inline save or no save when prompted.
 
 Remote or GitHub source inspection only happens after the user provides or approves the source.
 
@@ -236,4 +236,4 @@ LICENSE
 
 ## Version
 
-Current release: `0.1.1`
+Current release: `0.1.2`

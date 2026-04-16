@@ -73,7 +73,7 @@ If a manually targeted complex skill has no inline or cached manifest, the missi
 
 ## Bootstrap Missing Manifests
 
-When a manually targeted complex skill has no inline or cached manifest, enter bootstrap mode before asking the user to proceed.
+When a manually targeted complex skill has no inline or cached manifest, enter bootstrap mode immediately if local skill source is available.
 
 1. Treat the missing manifest as a failed required item.
 2. Inspect the target local `SKILL.md` first if it is available.
@@ -82,7 +82,7 @@ When a manually targeted complex skill has no inline or cached manifest, enter b
 5. Search for dependency signals in requirements, dependencies, MCP integrations, extensions, tools, environment variables, API keys, setup, install, prerequisites, subagents, scripts, project root, commands, auth, command snippets, helper paths, and referenced skill names.
 6. Generate a draft `## System Check Requirements` section from the discovered signals.
 7. Show the draft to the user.
-8. Ask where to save it: `1. Sidecar cache (default)`, `2. Inline skill file`, or `3. Do not save`.
+8. Ask where to save it: `1. Sidecar cache (default, preferred)`, `2. Inline skill file`, or `3. Do not save`.
 9. Save only after the user chooses a target.
 10. Rerun the check from the saved manifest.
 11. If the user chooses not to save, stop unless the user explicitly approves proceeding without a manifest.
@@ -155,7 +155,7 @@ Examples:
 6. Inspect remote or GitHub source only after the current routing and approval rules allow it.
 7. Search source material for `Requirements`, `Dependencies`, `MCP`, `MCP integrations`, `Extensions`, `Tools`, `Environment variables`, `API keys`, `Setup`, `Install`, `Prerequisites`, `Subagents`, `Scripts`, `Project root`, `Commands`, `Auth`, command snippets, helper paths, and referenced skill names.
 8. Synthesize a draft manifest from the discovered requirements.
-9. Show the draft to the user and ask where to save it: `1. Sidecar cache (default)`, `2. Inline skill file`, or `3. Do not save`.
+9. Show the draft to the user and ask where to save it: `1. Sidecar cache (default, preferred)`, `2. Inline skill file`, or `3. Do not save`.
 10. Save the manifest only after the user chooses a target.
 11. Rerun the light checklist from the saved manifest.
 12. If all required and optional items pass, print `System check: all checks green - proceeding.` and continue.
@@ -219,7 +219,7 @@ System check: <skill-name>
 - note: API calls are skipped when the key is missing
 
 Save where?
-1. Sidecar cache (default)
+1. Sidecar cache (default, preferred)
 2. Inline skill file
 3. Do not save
 ```
@@ -245,7 +245,7 @@ Proceed or stop?
 - Default to stop when a required item fails.
 - Do not print secrets or environment variable values.
 - Never silently edit a skill file.
-- Use sidecar cache as the default generated-manifest save target.
+- Use sidecar cache as the default and preferred generated-manifest save target.
 - Ask before remote or GitHub source inspection.
 - Do not use network, GitHub, or web inspection unless the user provides or approves the source for that missing-manifest recovery.
 - Prefer local path inspection over remote inspection when both are available.

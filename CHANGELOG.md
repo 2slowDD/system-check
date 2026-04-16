@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 
 This project follows the spirit of [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses semantic versioning.
 
+## [0.1.2] - 2026-04-16
+
+### Changed
+
+- Missing-manifest bootstrap now proceeds directly to draft generation when local skill source is available.
+- Marked sidecar cache as the default and preferred generated-manifest save target.
+
 ## [0.1.1] - 2026-04-16
 
 ### Changed
