@@ -5,13 +5,48 @@ description: Run before complex skills to verify required skills, MCPs, commands
 
 # System Check
 
-Use this skill before invoking any complex skill.
+Use this skill only when the user explicitly invokes a manual check with `sc-<target skill>`, such as `sc-SEO audit` or `sc-Brainstorming`.
+
+Normal skill invocation must not trigger `system-check`.
 
 ## Purpose
 
-`system-check` is a light preflight gate. It verifies that declared requirements appear available before a complex skill starts using subskills, MCPs, subagents, external commands, network/API/auth flows, long workflows, or multi-file deliverables.
+`system-check` is a light manual preflight gate. It verifies that declared requirements appear available before a user chooses to run a complex skill that uses subskills, MCPs, subagents, external commands, network/API/auth flows, long workflows, or multi-file deliverables.
 
 This skill saves resources. If a required item fails, complete the whole checklist, report the failed requirement, then stop before running the target skill unless the user clearly says to proceed.
+
+## Manual Invocation
+
+The user invokes this skill with:
+
+```text
+sc-<target skill>
+```
+
+Everything after `sc-` is treated as the target skill name.
+
+Examples:
+
+```text
+sc-SEO audit
+sc-Brainstorming
+sc-systematic-debugging
+sc-github fix ci
+```
+
+Do not run `system-check` when the user invokes the target skill normally.
+
+## Target Resolution
+
+Resolve the target skill in this order:
+
+1. Exact skill name match
+2. Case-insensitive normalized match
+3. Space, hyphen, and underscore normalized match
+4. Description/name fuzzy match when one target is clearly best
+5. Ask the user to choose if multiple candidates are plausible
+
+If no target can be found, ask for a local `SKILL.md` path or source URL.
 
 ## Complex Skill Definition
 
@@ -34,7 +69,25 @@ For the target skill, find requirements in this order:
 2. Sidecar cache at `~/.codex/system-check/manifests/<skill-name>.md`
 3. Missing-manifest fallback
 
-If a complex skill has no inline or cached manifest, the missing manifest is a failed required item.
+If a manually targeted complex skill has no inline or cached manifest, the missing manifest is a failed required item.
+
+## Bootstrap Missing Manifests
+
+When a manually targeted complex skill has no inline or cached manifest, enter bootstrap mode before asking the user to proceed.
+
+1. Treat the missing manifest as a failed required item.
+2. Inspect the target local `SKILL.md` first if it is available.
+3. If the local source is unavailable or insufficient, ask for the local path or GitHub/source URL.
+4. Inspect remote or GitHub source only after the current routing and approval rules allow it.
+5. Search for dependency signals in requirements, dependencies, MCP integrations, extensions, tools, environment variables, API keys, setup, install, prerequisites, subagents, scripts, project root, commands, auth, command snippets, helper paths, and referenced skill names.
+6. Generate a draft `## System Check Requirements` section from the discovered signals.
+7. Show the draft to the user.
+8. Ask where to save it: `1. Sidecar cache (default)`, `2. Inline skill file`, or `3. Do not save`.
+9. Save only after the user chooses a target.
+10. Rerun the check from the saved manifest.
+11. If the user chooses not to save, stop unless the user explicitly approves proceeding without a manifest.
+
+If the user presses enter or gives an ambiguous save response, use sidecar cache.
 
 ## Manifest Format
 
@@ -72,18 +125,41 @@ Rules:
 
 Do not run expensive readiness checks by default. Avoid API calls, auth probes, crawls, installs, downloads, paid service calls, or long test suites.
 
+## Manifest Inference Rules
+
+- Prefer conservative inference. Only include an item when the source material supports it.
+- `required command`, `required path`, `required project-root`, and `required skill` are required only when the dependency is explicit or strongly implied by setup, scripts, helper paths, or referenced skill names.
+- `required mcp` and `optional mcp` depend on whether the dependency is needed for the skill to function or is merely an alternate or situational integration.
+- `required env` and `optional env` must use environment variable names only. Never include secret values, tokens, or sample credentials.
+- `note` lines are for context, caveats, and skipped checks only. They never block execution.
+- Use `optional` only when the source clearly marks a dependency as non-blocking, fallback-only, or conditional.
+- Add confidence comments sparingly when they help later review.
+
+Examples:
+
+```markdown
+## System Check Requirements
+- required command: python # confidence: high, found in setup script
+- required path: D:\AI\Project\scripts\check_deps.py # confidence: medium, referenced by helper docs
+- optional env: PAGESPEED_API_KEY # confidence: low, used only for enhanced reporting
+- note: API calls are skipped when the key is missing
+```
+
 ## Procedure
 
 1. Identify the target complex skill.
 2. Locate its requirements manifest using the lookup order.
-3. If no manifest exists, print the missing-manifest checklist and ask for the target skill's local path or GitHub remote/source, then stop.
-4. If the user provides a local path, inspect that local source first. If the user provides a remote/source URL, inspect it only after following current web/GitHub routing and approval rules.
-5. Search source material for `Requirements`, `Dependencies`, `MCP`, `MCP integrations`, `Extensions`, `Tools`, `Environment variables`, `API keys`, `Setup`, `Install`, `Prerequisites`, `Subagents`, `Scripts`, `Project root`, `Commands`, and `Auth`.
-6. Synthesize a manifest from the discovered requirements.
-7. Save the manifest to `~/.codex/system-check/manifests/<skill-name>.md` by default. Only update a skill file inline when the user explicitly requests a skill maintenance edit.
-8. Rerun the light checklist from the saved manifest.
-9. If all required items pass, print `System check: all green - proceeding.` and continue.
-10. If any required item fails, list all results, print each failed required item, ask `Proceed or stop?`, and stop unless the user clearly says proceed.
+3. If no manifest exists, enter bootstrap mode and print the missing-manifest checklist.
+4. Inspect the target local `SKILL.md` first if it is available.
+5. Ask for the local path or GitHub/source URL only if the local source is unavailable or insufficient.
+6. Inspect remote or GitHub source only after the current routing and approval rules allow it.
+7. Search source material for `Requirements`, `Dependencies`, `MCP`, `MCP integrations`, `Extensions`, `Tools`, `Environment variables`, `API keys`, `Setup`, `Install`, `Prerequisites`, `Subagents`, `Scripts`, `Project root`, `Commands`, `Auth`, command snippets, helper paths, and referenced skill names.
+8. Synthesize a draft manifest from the discovered requirements.
+9. Show the draft to the user and ask where to save it: `1. Sidecar cache (default)`, `2. Inline skill file`, or `3. Do not save`.
+10. Save the manifest only after the user chooses a target.
+11. Rerun the light checklist from the saved manifest.
+12. If all required items pass, print `System check: all green - proceeding.` and continue.
+13. If any required item fails, list all results, print each failed required item, ask `Proceed or stop?`, and stop unless the user clearly says proceed.
 
 ## Required Output Format
 
@@ -114,6 +190,26 @@ This requirement failed - required mcp: google_search_console | mcp__google_sear
 Proceed or stop?
 ```
 
+Bootstrap draft:
+
+```text
+System check: <skill-name>
+
+[fail] required manifest: no System Check Requirements section or sidecar manifest found
+[note] bootstrap draft generated from local SKILL.md and dependency signals
+
+## System Check Requirements
+- required command: python # confidence: high, found in setup script
+- required path: D:\AI\ChatGPT\systems-check\scripts\check_deps.py # confidence: medium, referenced by helper docs
+- optional env: PAGESPEED_API_KEY # confidence: low, used only for reporting
+- note: API calls are skipped when the key is missing
+
+Save where?
+1. Sidecar cache (default)
+2. Inline skill file
+3. Do not save
+```
+
 Missing manifest:
 
 ```text
@@ -130,8 +226,16 @@ Proceed or stop?
 ## Safety Rules
 
 - Always complete the checklist before stopping.
+- Do not auto-run before complex skills.
+- Run only when the user explicitly invokes `sc-<target skill>`.
 - Default to stop when a required item fails.
 - Do not print secrets or environment variable values.
+- Never silently edit a skill file.
+- Use sidecar cache as the default generated-manifest save target.
+- Ask before remote or GitHub source inspection.
 - Do not use network, GitHub, or web inspection unless the user provides or approves the source for that missing-manifest recovery.
 - Prefer local path inspection over remote inspection when both are available.
+- Do not run expensive checks while generating a draft manifest.
+- Never delete sidecar manifests during uninstall unless a separate explicit purge command exists.
+- Do not execute the target skill until the saved manifest passes or the user explicitly approves proceeding without a manifest.
 - Do not execute the target complex skill until the system check passes or the user explicitly approves proceeding after failure.

@@ -18,14 +18,21 @@ Before a complex skill starts using subskills, MCPs, external commands, helper s
 
 ## What It Does
 
-- Checks requirements declared by complex skills.
+- Runs only when manually invoked with `sc-<target skill>`.
+- Checks requirements declared by targeted complex skills.
 - Lists every item with `[pass]`, `[fail]`, or `[note]`.
 - Stops on failed required items unless the user clearly approves proceeding.
 - Never prints environment variable values.
 - Avoids network, auth, API, install, or paid-service checks by default.
-- Caches discovered manifests in a sidecar location instead of mutating skill files during preflight.
+- Saves generated manifests to sidecar cache by default, with user override options for inline save or no save.
 
 ## Install For Codex
+
+| Action | Windows PowerShell | macOS/Linux Shell |
+| ------ | ------------------ | ----------------- |
+| Install | `.\scripts\install.ps1` | `sh scripts/install.sh` |
+| Sync from repo | `.\scripts\sync.ps1` | `sh scripts/sync.sh` |
+| Uninstall | `.\scripts\uninstall.ps1` | `sh scripts/uninstall.sh` |
 
 ### Codex: Windows PowerShell
 
@@ -58,6 +65,12 @@ $HOME/.codex/skills/system-check/SKILL.md
 Restart your Codex session after installing so the skill list refreshes.
 
 ## Install For Claude
+
+| Action | Windows PowerShell | macOS/Linux Shell |
+| ------ | ------------------ | ----------------- |
+| Install | `.\scripts\install-claude.ps1` | `sh scripts/install-claude.sh` |
+| Sync from repo | `.\scripts\sync-claude.ps1` | `sh scripts/sync-claude.sh` |
+| Uninstall | `.\scripts\uninstall-claude.ps1` | `sh scripts/uninstall-claude.sh` |
 
 Claude skill installations commonly use:
 
@@ -101,22 +114,38 @@ $HOME/.claude/skills/system-check/SKILL.md
 
 Restart your Claude session after installing so the skill list refreshes.
 
-## Add The Global Hook
+Uninstall removes only the installed `system-check` skill. Cached manifests are preserved.
 
-Add this rule to your `AGENTS.md` or equivalent agent instructions:
+## Manual Usage
+
+`system-check` does not run automatically before complex skills.
+
+Invoke it manually with:
+
+```text
+sc-<target skill>
+```
+
+Examples:
+
+```text
+sc-SEO audit
+sc-Brainstorming
+sc-systematic-debugging
+```
+
+Normal skill invocation, such as `SEO audit`, does not trigger `system-check`.
+
+Add this manual-only rule to your `AGENTS.md` or equivalent agent instructions:
 
 ```markdown
-## System Check For Complex Skills
+## Manual System Check
 
-Before invoking any complex skill other than `system-check` itself, run the `system-check` skill against that skill's declared requirements.
+Do not run `system-check` automatically before complex skills.
 
-A skill is complex if it uses subskills, MCPs/apps/connectors, subagents, external CLIs, fixed project roots, helper scripts, network/API/auth, long-running workflows, or multi-file deliverables.
+Run it only when the user explicitly invokes a manual check using `sc-<target skill>`, such as `sc-SEO audit` or `sc-Brainstorming`.
 
-If all required items pass, print `System check: all green - proceeding.` and continue.
-
-If any required item fails, complete the checklist, print all failed required items one per line as `This requirement failed - <name>`, ask `Proceed or stop?`, and stop unless the user clearly approves proceeding.
-
-If a complex skill has no inline or cached requirements manifest, treat the missing manifest as a failed requirement. Inspect the skill's local `SKILL.md` if available; otherwise ask for the skill's local path or GitHub remote/source so requirements can be inspected and cached.
+When `sc-<target skill>` is invoked, treat everything after `sc-` as the target skill name and use the `system-check` skill to resolve and check that target.
 ```
 
 ## Manifest Format
@@ -136,6 +165,31 @@ Complex skills declare their preflight requirements in `SKILL.md`:
 
 See [examples/system-check-requirements-example.md](examples/system-check-requirements-example.md) for a reusable template.
 
+## Automatic Manifest Bootstrap
+
+When a targeted skill has no manifest, `system-check` can generate one from the local skill source.
+
+The flow is:
+
+1. Inspect local `SKILL.md` when available.
+2. Infer a draft manifest from dependency signals.
+3. Show the draft for review.
+4. Ask where to save it:
+   - `1. Sidecar cache (default)`
+   - `2. Inline skill file`
+   - `3. Do not save`
+5. Rerun the system check from the saved manifest.
+
+Generated manifests save to sidecar cache by default:
+
+```text
+~/.codex/system-check/manifests/<skill-name>.md
+```
+
+The user can override this and choose inline save or no save when prompted.
+
+Remote or GitHub source inspection only happens after the user provides or approves the source.
+
 ## Security Model
 
 `system-check` is intentionally conservative:
@@ -146,6 +200,8 @@ See [examples/system-check-requirements-example.md](examples/system-check-requir
 - It does not print secret values.
 - It does not perform network or GitHub inspection unless the user provides or approves the source.
 - It prefers local source inspection over remote source inspection.
+- It does not run automatically before complex skills.
+- It preserves cached manifests during uninstall.
 
 See [SECURITY.md](SECURITY.md) for reporting and review guidance.
 
@@ -158,6 +214,14 @@ scripts/install.ps1                    # Windows installer
 scripts/install.sh                     # macOS/Linux installer
 scripts/install-claude.ps1             # Windows Claude installer
 scripts/install-claude.sh              # macOS/Linux Claude installer
+scripts/sync.ps1                       # Windows Codex sync
+scripts/sync.sh                        # macOS/Linux Codex sync
+scripts/sync-claude.ps1                # Windows Claude sync
+scripts/sync-claude.sh                 # macOS/Linux Claude sync
+scripts/uninstall.ps1                  # Windows Codex uninstall
+scripts/uninstall.sh                   # macOS/Linux Codex uninstall
+scripts/uninstall-claude.ps1           # Windows Claude uninstall
+scripts/uninstall-claude.sh            # macOS/Linux Claude uninstall
 docs/SECURITY-CHECK.md                 # Local security review notes
 .github/ISSUE_TEMPLATE/bug_report.md
 .github/ISSUE_TEMPLATE/feature_request.md

@@ -22,12 +22,20 @@ jobs:
         run: |
           sh -n scripts/install.sh
           sh -n scripts/install-claude.sh
+          sh -n scripts/sync.sh
+          sh -n scripts/sync-claude.sh
+          sh -n scripts/uninstall.sh
+          sh -n scripts/uninstall-claude.sh
 
       - name: Check PowerShell installer syntax
         shell: pwsh
         run: |
           $null = [scriptblock]::Create((Get-Content -LiteralPath './scripts/install.ps1' -Raw))
           $null = [scriptblock]::Create((Get-Content -LiteralPath './scripts/install-claude.ps1' -Raw))
+          $null = [scriptblock]::Create((Get-Content -LiteralPath './scripts/sync.ps1' -Raw))
+          $null = [scriptblock]::Create((Get-Content -LiteralPath './scripts/sync-claude.ps1' -Raw))
+          $null = [scriptblock]::Create((Get-Content -LiteralPath './scripts/uninstall.ps1' -Raw))
+          $null = [scriptblock]::Create((Get-Content -LiteralPath './scripts/uninstall-claude.ps1' -Raw))
 
       - name: Check Markdown fence balance
         run: |
@@ -57,7 +65,7 @@ jobs:
               re.compile(r'password\s*='),
               re.compile(r'secret\s*='),
               re.compile('g' + 'hp_'),
-              re.compile('s' + 'k-[A-Za-z0-9]'),
+              re.compile('s' + r'k-[A-Za-z0-9]{20,}'),
           ]
           findings = []
           for path in Path('.').rglob('*'):

@@ -22,3 +22,8 @@ This project follows the spirit of [Keep a Changelog](https://keepachangelog.com
 - GitHub issue and pull request templates.
 - README badge strip for CI, Claude Code Skill, Codex Skill, license, and version.
 - GitHub Actions CI workflow for package validation.
+- Manual `sc-*` targeting as the supported invocation model.
+- Removal of automatic complex-skill preflight behavior.
+- Sidecar cache as the default generated-manifest save target, with inline/no-save override choices.
+- Uninstall and sync scripts for Codex and Claude on Windows and POSIX.
+- Uninstall behavior that preserves cached manifests.
