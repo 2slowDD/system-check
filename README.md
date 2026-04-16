@@ -5,7 +5,7 @@
   <img alt="Claude Code Skill" src="https://img.shields.io/badge/Claude%20Code-Skill-5A32A3?style=for-the-badge">
   <img alt="Codex Skill" src="https://img.shields.io/badge/Codex-Skill-111111?style=for-the-badge">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"></a>
-  <img alt="Version 0.1.3" src="https://img.shields.io/badge/Version-0.1.3-blue?style=for-the-badge">
+  <img alt="Version 0.1.4" src="https://img.shields.io/badge/Version-0.1.4-blue?style=for-the-badge">
 </p>
 
 <p align="center">
@@ -23,7 +23,7 @@ Before a complex skill starts using subskills, MCPs, external commands, helper s
 - Lists every item with `✅`, `❌`, or `ℹ️`.
 - Stops on failed required items unless the user clearly approves proceeding.
 - Reports optional gaps separately instead of calling a checklist "all green."
-- Offers interactive post-send autocomplete when invoked as `sc-` or `sc-<partial>`.
+- Offers post-send target suggestions when invoked as `sc-` or `sc-<partial>`.
 - Never prints environment variable values.
 - Avoids network, auth, API, install, or paid-service checks by default.
 - Saves generated manifests to sidecar cache by default and preference, with user override options for inline save or no save.
@@ -65,6 +65,16 @@ $HOME/.codex/skills/system-check/SKILL.md
 ```
 
 Restart your Codex session after installing so the skill list refreshes.
+
+### Codex: Smoke Test
+
+After restarting Codex, send this as a message:
+
+```text
+sc-
+```
+
+That means type `sc-` + Enter. Nothing appears while typing because skills run only after a message is submitted. After you submit `sc-`, the assistant should list available `system-check` targets and wait for you to choose one.
 
 ## Install For Claude
 
@@ -138,11 +148,11 @@ sc-systematic-debugging
 
 Normal skill invocation, such as `SEO audit`, does not trigger `system-check`.
 
-## Autocomplete
+## Target Suggestions
 
 Send `sc-` to ask the assistant for available system-check targets. Send `sc-<partial>`, such as `sc-fire`, to get matching skills before choosing one.
 
-This is post-send assistant autocomplete: the skill can suggest targets after the message is submitted. Native typeahead while typing requires support from the host AI client.
+These are post-send assistant target suggestions: the skill can suggest targets after you submit a message. Nothing appears while typing in the composer. Native typeahead while typing requires support from the host AI client.
 
 Add this manual-only rule to your `AGENTS.md` or equivalent agent instructions:
 
@@ -243,4 +253,4 @@ LICENSE
 
 ## Version
 
-Current release: `0.1.3`
+Current release: `0.1.4`

@@ -36,18 +36,18 @@ sc-github fix ci
 
 Do not run `system-check` when the user invokes the target skill normally.
 
-## Autocomplete / Partial Invocation
+## Post-Send Target Suggestions
 
-This skill cannot add native typeahead to the chat composer by itself. True typeahead requires host client support from Codex, Claude, or another AI client.
+This skill cannot add native typeahead to the chat composer by itself. True typeahead requires host client support from Codex, Claude, or another AI client. The behavior here happens after the user submits `sc-` or `sc-<partial>` as a message.
 
-When the user sends exactly `sc-`, treat it as an autocomplete request:
+When the user sends exactly `sc-`, treat it as a post-send target suggestion request:
 
 1. List all available skills from the current session inventory, grouped by source when the source is known.
 2. If the current session inventory is unavailable or obviously incomplete, scan known local skill roots for this AI setup as a fallback.
 3. Ask the user to reply with a number or a full `sc-<target skill>` invocation.
 4. Do not run any system check until the user chooses a target.
 
-When the user message starts with `sc-` and the suffix is partial, such as `sc-fire` or `sc-seo-g`, treat it as an autocomplete request before normal target resolution:
+When the user message starts with `sc-` and the suffix is partial, such as `sc-fire` or `sc-seo-g`, treat it as a post-send target suggestion request before normal target resolution:
 
 1. Match the suffix against skill names with the same normalization used by Target Resolution.
 2. Prefer current-session skills over fallback filesystem discoveries.
@@ -168,7 +168,7 @@ Examples:
 
 ## Procedure
 
-1. If the user sent `sc-` or a partial `sc-<partial>` invocation, handle Autocomplete / Partial Invocation first.
+1. If the user sent `sc-` or a partial `sc-<partial>` invocation, handle Post-Send Target Suggestions first.
 2. Identify the target complex skill.
 3. Locate its requirements manifest using the lookup order.
 4. If no manifest exists, enter bootstrap mode and print the missing-manifest checklist.
@@ -264,7 +264,7 @@ Proceed or stop?
 - Always complete the checklist before stopping.
 - Do not auto-run before complex skills.
 - Run only when the user explicitly invokes `sc-<target skill>`.
-- Treat exact `sc-` and partial `sc-<partial>` messages as autocomplete requests, not approval to run a check.
+- Treat exact `sc-` and partial `sc-<partial>` messages as target suggestion requests, not approval to run a check.
 - Default to stop when a required item fails.
 - Do not print secrets or environment variable values.
 - Never silently edit a skill file.

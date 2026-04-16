@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 
 This project follows the spirit of [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses semantic versioning.
 
+## [0.1.4] - 2026-04-16
+
+### Changed
+
+- Renamed user-facing autocomplete wording to post-send target suggestions to avoid implying while-typing composer support.
+- Added a README smoke test showing `sc-` + Enter after install and restart.
+
 ## [0.1.3] - 2026-04-16
 
 ### Added
