@@ -21,12 +21,18 @@ function assertExcludes(file, unexpected) {
   }
 }
 
+// Derive current version from CHANGELOG so this file never needs updating on bumps
+const changelogText = read('CHANGELOG.md');
+const versionMatch = changelogText.match(/^## \[(\d+\.\d+\.\d+)\]/m);
+if (!versionMatch) throw new Error('CHANGELOG.md has no version entry matching ## [x.y.z]');
+const currentVersion = versionMatch[1];
+
 const checks = [
-  ['README.md', 'Version 0.1.6'],
+  ['README.md', `Version ${currentVersion}`],
   ['README.md', 'system-check-sync'],
   ['README.md', 'Use absolute paths in manifests'],
   ['README.md', '<absolute path to SEO-AUDIT-ORIGINAL>'],
-  ['CHANGELOG.md', '## [0.1.6] - 2026-04-17'],
+  [`CHANGELOG.md`, `## [${currentVersion}]`],
   ['skill/SKILL.md', '## Built-In Sync Command'],
   ['skill/SKILL.md', '`system-check-sync`'],
   ['skill/SKILL.md', 'current working directory\'s `systems-check` child'],
