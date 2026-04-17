@@ -5,7 +5,7 @@
   <img alt="Claude Code Skill" src="https://img.shields.io/badge/Claude%20Code-Skill-5A32A3?style=for-the-badge">
   <img alt="Codex Skill" src="https://img.shields.io/badge/Codex-Skill-111111?style=for-the-badge">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"></a>
-  <img alt="Version 0.1.6" src="https://img.shields.io/badge/Version-0.1.6-blue?style=for-the-badge">
+  <img alt="Version 0.1.7" src="https://img.shields.io/badge/Version-0.1.7-blue?style=for-the-badge">
 </p>
 
 <p align="center">

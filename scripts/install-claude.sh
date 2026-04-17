@@ -16,4 +16,27 @@ mkdir -p "$TARGET_DIR"
 cp "$SOURCE" "$TARGET"
 
 echo "Installed system-check skill to $TARGET"
+
+# Inject sc- trigger rule into CLAUDE.md (idempotent)
+CLAUDE_MD="$HOME/.claude/CLAUDE.md"
+START_MARKER="<!-- sc-trigger:start -->"
+
+touch "$CLAUDE_MD"
+
+if ! grep -qF "$START_MARKER" "$CLAUDE_MD"; then
+  cat >> "$CLAUDE_MD" << 'SCEOF'
+
+<!-- sc-trigger:start -->
+## system-check Trigger (sc-)
+When the user sends a message matching `sc-<target>` (e.g. `sc-seo`, `sc-brainstorm`):
+- Invoke the `system-check` skill with `<target>` as the target skill
+- Do NOT treat it as a skill name or slash command directly
+- If sent as `sc-` alone, invoke `system-check` and list available targets
+<!-- sc-trigger:end -->
+SCEOF
+  echo "Injected sc- trigger rule into $CLAUDE_MD"
+else
+  echo "sc- trigger rule already present in $CLAUDE_MD"
+fi
+
 echo "Restart Claude so the skill list refreshes."

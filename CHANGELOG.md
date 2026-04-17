@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 
 This project follows the spirit of [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses semantic versioning.
 
+## [0.1.7] - 2026-04-17
+
+### Added
+
+- Claude install, sync, and uninstall scripts now manage a `sc-` trigger rule in `~/.claude/CLAUDE.md`.
+- On install and sync, the rule is injected idempotently (guarded by `<!-- sc-trigger:start -->` sentinel).
+- On uninstall, the rule is cleanly removed from `CLAUDE.md` using line-by-line sentinel matching.
+- Ensures `sc-<target>` correctly invokes the `system-check` skill on any new machine without manual configuration.
+
 ## [0.1.6] - 2026-04-17
 
 ### Changed
