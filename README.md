@@ -269,7 +269,3 @@ SECURITY.md
 CONTRIBUTING.md
 LICENSE
 ```
-
-## Version
-
-Current release: `0.1.5`
