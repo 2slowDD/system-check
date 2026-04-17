@@ -5,7 +5,7 @@
   <img alt="Claude Code Skill" src="https://img.shields.io/badge/Claude%20Code-Skill-5A32A3?style=for-the-badge">
   <img alt="Codex Skill" src="https://img.shields.io/badge/Codex-Skill-111111?style=for-the-badge">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"></a>
-  <img alt="Version 0.1.5" src="https://img.shields.io/badge/Version-0.1.5-blue?style=for-the-badge">
+  <img alt="Version 0.1.6" src="https://img.shields.io/badge/Version-0.1.6-blue?style=for-the-badge">
 </p>
 
 <p align="center">
@@ -16,7 +16,9 @@
 
 Before a complex skill starts using subskills, MCPs, external commands, helper scripts, project roots, auth flows, or long workflows, `system-check` verifies that declared requirements appear available. If anything required is missing, it completes the checklist and stops before expensive work begins.
 
-![Example system-check output](system%20check%20example.jpg)
+![Current system-check example output](system%20check%20example.jpg)
+
+_Example output from the current manual `sc-<target skill>` flow._
 
 ## What It Does
 
@@ -183,14 +185,18 @@ When `sc-<target skill>` is invoked, treat everything after `sc-` as the target 
 
 Complex skills declare their preflight requirements in `SKILL.md`:
 
+Use absolute paths in manifests. The examples below use placeholders so they can
+be copied on any machine; replace each placeholder with the real local path for
+that user's checkout.
+
 ```markdown
 ## System Check Requirements
 - required skill: seo-firecrawl
 - required mcp: google_search_console | mcp__google_search_console
 - required command: python
 - optional env: PAGESPEED_API_KEY
-- required project-root: D:\AI\SEO-AUDIT-ORIGINAL
-- required path: D:\AI\SEO-AUDIT-ORIGINAL\scripts\check_deps.py
+- required project-root: <absolute path to SEO-AUDIT-ORIGINAL>
+- required path: <absolute path to SEO-AUDIT-ORIGINAL>\scripts\check_deps.py
 - note: PageSpeed checks are skipped if the API key is unavailable
 ```
 

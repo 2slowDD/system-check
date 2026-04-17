@@ -74,7 +74,7 @@ The generated draft should include short confidence comments where useful:
 ```markdown
 ## System Check Requirements
 - required command: python # high confidence: setup command uses python
-- required path: D:\AI\SEO-AUDIT-ORIGINAL\scripts\check_deps.py # high confidence: required helper script
+- required path: <absolute path to SEO-AUDIT-ORIGINAL>\scripts\check_deps.py # high confidence: required helper script
 - optional env: FIRECRAWL_API_KEY # medium confidence: optional Firecrawl integration
 - note: Google checks should be skipped when the GSC MCP is unavailable
 ```

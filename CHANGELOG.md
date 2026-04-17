@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 This project follows the spirit of [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses semantic versioning.
 
+## [0.1.6] - 2026-04-17
+
+### Changed
+
+- Made `system-check-sync` source repository discovery machine-neutral for local clones under common per-user source folders or a `systems-check` child of the current working directory.
+- Clarified manifest examples to use replaceable absolute-path placeholders instead of machine-specific or ambiguous relative paths.
+- Expanded release documentation verification to catch machine-specific path examples.
+
 ## [0.1.5] - 2026-04-16
 
 ### Added

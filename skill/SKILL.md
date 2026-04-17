@@ -46,12 +46,18 @@ Repository resolution order:
 
 1. Use the current working directory when it is inside a Git repository whose `origin` remote resolves to `github.com/2slowDD/system-check`.
 2. Use `SYSTEM_CHECK_REPO` when that environment variable points to a Git repository with the same `origin`.
-3. Check common local source paths:
-   - `D:\AI\ChatGPT\systems-check`
+3. Use the current working directory's `systems-check` child when it is a Git repository with the same `origin`.
+4. Check common local source paths:
+   - `%USERPROFILE%\source\systems-check`
+   - `%USERPROFILE%\src\systems-check`
+   - `%USERPROFILE%\projects\systems-check`
    - `%USERPROFILE%\systems-check`
    - `%USERPROFILE%\Documents\systems-check`
+   - `$HOME/source/systems-check`
+   - `$HOME/src/systems-check`
+   - `$HOME/projects/systems-check`
    - `$HOME/systems-check`
-4. If no source repository is found, stop and report that `system-check-sync` needs a local clone of `github.com/2slowDD/system-check`.
+5. If no source repository is found, stop and report that `system-check-sync` needs a local clone of `github.com/2slowDD/system-check`.
 
 Sync procedure:
 
@@ -153,14 +159,18 @@ If the user presses enter or gives an ambiguous save response, use sidecar cache
 
 Requirements are simple lines:
 
+Use absolute paths in manifests. Documentation examples use placeholders so the
+same instructions work on any machine; replace each placeholder with the real
+local path before saving a manifest.
+
 ```markdown
 ## System Check Requirements
 - required skill: seo-firecrawl
 - required mcp: google_search_console | mcp__google_search_console
 - required command: python
 - optional env: PAGESPEED_API_KEY
-- required project-root: D:\AI\SEO-AUDIT-ORIGINAL
-- required path: D:\AI\SEO-AUDIT-ORIGINAL\scripts\check_deps.py
+- required project-root: <absolute path to SEO-AUDIT-ORIGINAL>
+- required path: <absolute path to SEO-AUDIT-ORIGINAL>\scripts\check_deps.py
 - note: PageSpeed checks are skipped if the API key is unavailable
 ```
 
@@ -200,7 +210,7 @@ Examples:
 ```markdown
 ## System Check Requirements
 - required command: python # confidence: high, found in setup script
-- required path: D:\AI\Project\scripts\check_deps.py # confidence: medium, referenced by helper docs
+- required path: <absolute path to Project>\scripts\check_deps.py # confidence: medium, referenced by helper docs
 - optional env: PAGESPEED_API_KEY # confidence: low, used only for enhanced reporting
 - note: API calls are skipped when the key is missing
 ```
@@ -276,7 +286,7 @@ System check: <skill-name>
 
 ## System Check Requirements
 - required command: python # confidence: high, found in setup script
-- required path: D:\AI\ChatGPT\systems-check\scripts\check_deps.py # confidence: medium, referenced by helper docs
+- required path: <absolute path to systems-check>\scripts\check_deps.py # confidence: medium, referenced by helper docs
 - optional env: PAGESPEED_API_KEY # confidence: low, used only for reporting
 - note: API calls are skipped when the key is missing
 

@@ -9,8 +9,8 @@ Copy the fenced manifest block below into the target skill's `SKILL.md`, then cu
 - required mcp: example_service | mcp__example_service
 - required command: python
 - optional env: EXAMPLE_API_KEY
-- required project-root: D:\AI\EXAMPLE-PROJECT
-- required path: D:\AI\EXAMPLE-PROJECT\scripts\check_deps.py
+- required project-root: <absolute path to EXAMPLE-PROJECT>
+- required path: <absolute path to EXAMPLE-PROJECT>\scripts\check_deps.py
 - note: Optional API checks should be skipped when EXAMPLE_API_KEY is missing
 ```
 
