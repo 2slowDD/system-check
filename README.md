@@ -145,7 +145,7 @@ sc-<target skill>
 Examples:
 
 ```text
-sc-SEO audit
+sc-seo
 sc-Brainstorming
 sc-systematic-debugging
 ```
