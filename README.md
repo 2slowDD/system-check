@@ -266,4 +266,4 @@ LICENSE
 
 ## Version
 
-Current release: `0.1.4`
+Current release: `0.1.5`
